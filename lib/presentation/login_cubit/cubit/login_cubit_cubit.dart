@@ -1,6 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 import 'package:state_example/core.dart';
 
+@injectable
 class LoginCubitCubit extends Cubit<LoginCubitState> {
   LoginCubitCubit() : super(LoginCubitState());
 

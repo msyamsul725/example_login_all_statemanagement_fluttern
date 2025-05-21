@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:state_example/core.dart';
 
-class LoginSetstaeView extends StatefulWidget {
-  const LoginSetstaeView({super.key});
+final loginRiverpodProvider = StateNotifierProvider<LoginRiverpodController, LoginRiverpodState>((ref) {
+  return LoginRiverpodController();
+});
+
+class LoginRiverpodView extends ConsumerStatefulWidget {
+  const LoginRiverpodView({super.key});
 
   @override
-  State<LoginSetstaeView> createState() => _LoginSetstaeViewState();
+  ConsumerState<LoginRiverpodView> createState() => _LoginRiverpodViewState();
 }
 
-class _LoginSetstaeViewState extends State<LoginSetstaeView> {
-  final controller = LoginSetstaeController();
-  bool get isLoading => controller.state.status == LoginSetstaeStatus.loading;
-  bool get hasError => controller.state.status == LoginSetstaeStatus.error;
-  String get errorMessage => controller.state.errorMessage;
-  int get counter => controller.state.counter;
-
+class _LoginRiverpodViewState extends ConsumerState<LoginRiverpodView> {
   @override
   void initState() {
     super.initState();
@@ -23,14 +22,14 @@ class _LoginSetstaeViewState extends State<LoginSetstaeView> {
 
   void onReady() {
     // After 1st build() is called
-    controller.initializeData(() {
-      setState(() {});
-    });
+    ref.read(loginRiverpodProvider.notifier).initializeData();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
+    final state = ref.watch(loginRiverpodProvider);
+
+    if (state.status == LoginRiverpodStatus.loading) {
       return const Scaffold(
         body: Center(
           child: CircularProgressIndicator(),
@@ -38,17 +37,17 @@ class _LoginSetstaeViewState extends State<LoginSetstaeView> {
       );
     }
 
-    if (hasError) {
+    if (state.status == LoginRiverpodStatus.error) {
       return Scaffold(
         body: Center(
-          child: Text("Error: $errorMessage"),
+          child: Text("Error: ${state.errorMessage}"),
         ),
       );
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("LoginSetstae"),
+        title: const Text("LoginRiverpod"),
         actions: const [],
       ),
       body: SingleChildScrollView(
@@ -68,24 +67,18 @@ class _LoginSetstaeViewState extends State<LoginSetstaeView> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
-                  onPressed: () {
-                    controller.decrement();
-                    setState(() {});
-                  },
+                  onPressed: () => ref.read(loginRiverpodProvider.notifier).decrement(),
                   icon: const Icon(Icons.remove, color: Colors.grey),
                 ),
                 Text(
-                  "$counter",
+                  "${state.counter}",
                   style: const TextStyle(
                     fontSize: 20.0,
                     color: Colors.grey,
                   ),
                 ),
                 IconButton(
-                  onPressed: () {
-                    controller.increment();
-                    setState(() {});
-                  },
+                  onPressed: () => ref.read(loginRiverpodProvider.notifier).increment(),
                   icon: const Icon(Icons.add, color: Colors.grey),
                 ),
               ],
@@ -98,11 +91,7 @@ class _LoginSetstaeViewState extends State<LoginSetstaeView> {
                 backgroundColor: Colors.black,
                 foregroundColor: Colors.white,
               ),
-              onPressed: () {
-                controller.initializeData(() {
-                  setState(() {});
-                });
-              },
+              onPressed: () => ref.read(loginRiverpodProvider.notifier).initializeData(),
               child: const Text("Reload"),
             ),
           ],

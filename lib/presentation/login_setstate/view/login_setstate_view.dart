@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:state_example/core.dart';
 
-final loginRipervodProvider = StateNotifierProvider<LoginRipervodController, LoginRipervodState>((ref) {
-  return LoginRipervodController();
-});
-
-class LoginRipervodView extends ConsumerStatefulWidget {
-  const LoginRipervodView({super.key});
+class LoginSetstateView extends StatefulWidget {
+  const LoginSetstateView({super.key});
 
   @override
-  ConsumerState<LoginRipervodView> createState() => _LoginRipervodViewState();
+  State<LoginSetstateView> createState() => _LoginSetstateViewState();
 }
 
-class _LoginRipervodViewState extends ConsumerState<LoginRipervodView> {
+class _LoginSetstateViewState extends State<LoginSetstateView> {
+  final controller = LoginSetstateController();
+  bool get isLoading => controller.state.status == LoginSetstateStatus.loading;
+  bool get hasError => controller.state.status == LoginSetstateStatus.error;
+  String get errorMessage => controller.state.errorMessage;
+  int get counter => controller.state.counter;
+
   @override
   void initState() {
     super.initState();
@@ -22,14 +23,14 @@ class _LoginRipervodViewState extends ConsumerState<LoginRipervodView> {
 
   void onReady() {
     // After 1st build() is called
-    ref.read(loginRipervodProvider.notifier).initializeData();
+    controller.initializeData(() {
+      setState(() {});
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(loginRipervodProvider);
-
-    if (state.status == LoginRipervodStatus.loading) {
+    if (isLoading) {
       return const Scaffold(
         body: Center(
           child: CircularProgressIndicator(),
@@ -37,17 +38,17 @@ class _LoginRipervodViewState extends ConsumerState<LoginRipervodView> {
       );
     }
 
-    if (state.status == LoginRipervodStatus.error) {
+    if (hasError) {
       return Scaffold(
         body: Center(
-          child: Text("Error: ${state.errorMessage}"),
+          child: Text("Error: $errorMessage"),
         ),
       );
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("LoginRipervod"),
+        title: const Text("LoginSetstate"),
         actions: const [],
       ),
       body: SingleChildScrollView(
@@ -67,18 +68,24 @@ class _LoginRipervodViewState extends ConsumerState<LoginRipervodView> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
-                  onPressed: () => ref.read(loginRipervodProvider.notifier).decrement(),
+                  onPressed: () {
+                    controller.decrement();
+                    setState(() {});
+                  },
                   icon: const Icon(Icons.remove, color: Colors.grey),
                 ),
                 Text(
-                  "${state.counter}",
+                  "$counter",
                   style: const TextStyle(
                     fontSize: 20.0,
                     color: Colors.grey,
                   ),
                 ),
                 IconButton(
-                  onPressed: () => ref.read(loginRipervodProvider.notifier).increment(),
+                  onPressed: () {
+                    controller.increment();
+                    setState(() {});
+                  },
                   icon: const Icon(Icons.add, color: Colors.grey),
                 ),
               ],
@@ -91,7 +98,11 @@ class _LoginRipervodViewState extends ConsumerState<LoginRipervodView> {
                 backgroundColor: Colors.black,
                 foregroundColor: Colors.white,
               ),
-              onPressed: () => ref.read(loginRipervodProvider.notifier).initializeData(),
+              onPressed: () {
+                controller.initializeData(() {
+                  setState(() {});
+                });
+              },
               child: const Text("Reload"),
             ),
           ],

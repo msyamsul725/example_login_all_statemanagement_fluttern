@@ -1,22 +1,22 @@
-enum LoginRipervodStatus { initial, loading, loaded, error }
+enum LoginRiverpodStatus { initial, loading, loaded, error }
 
-class LoginRipervodState {
-  final LoginRipervodStatus status;
+class LoginRiverpodState {
+  final LoginRiverpodStatus status;
   final int counter;
   final String errorMessage;
 
-  LoginRipervodState({
-    this.status = LoginRipervodStatus.initial,
+  LoginRiverpodState({
+    this.status = LoginRiverpodStatus.initial,
     this.counter = 0,
     this.errorMessage = '',
   });
 
-  LoginRipervodState copyWith({
-    LoginRipervodStatus? status,
+  LoginRiverpodState copyWith({
+    LoginRiverpodStatus? status,
     int? counter,
     String? errorMessage,
   }) {
-    return LoginRipervodState(
+    return LoginRiverpodState(
       status: status ?? this.status,
       counter: counter ?? this.counter,
       errorMessage: errorMessage ?? this.errorMessage,

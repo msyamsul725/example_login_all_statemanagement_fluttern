@@ -1,19 +1,19 @@
 import 'package:state_example/core.dart';
 
-class LoginSetstaeController {
-  final state = LoginSetstaeState();
+class LoginSetstateController {
+  final state = LoginSetstateState();
 
   Future<void> initializeData(Function onStateChanged) async {
-    state.status = LoginSetstaeStatus.loading;
+    state.status = LoginSetstateStatus.loading;
     onStateChanged();
     
     try {
       // Simulate API call
       await Future.delayed(const Duration(seconds: 2));
-      state.status = LoginSetstaeStatus.loaded;
+      state.status = LoginSetstateStatus.loaded;
       onStateChanged();
     } catch (e) {
-      state.status = LoginSetstaeStatus.error;
+      state.status = LoginSetstateStatus.error;
       state.errorMessage = e.toString();
       onStateChanged();
     }
